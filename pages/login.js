@@ -1,11 +1,9 @@
-import {} from "yup";
-
+import { FormProvider, useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
-import { object, string } from "yup/lib/locale";
+import { object, string } from "yup";
 
 import Link from "next/link";
 import firebase from "../utils/firebase";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const schema = object().shape({
