@@ -1,39 +1,55 @@
-import React, { useState } from "react";
+import {} from "yup";
+
+import React, { useEffect, useState } from "react";
+import { object, string } from "yup/lib/locale";
 
 import Link from "next/link";
 import firebase from "../utils/firebase";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+const schema = object().shape({
+  email: string().required("Dette feltet er påkrevd"),
+  password: string().required("Dette feltet er påkrevd"),
+});
 
 const Login = () => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [error, setError] = useState(null);
 
-  const handleSubmit = async (evt) => {
-    evt.preventDefault();
+  const { register, handleSubmit, watch, errors } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      email: "mathias@feed.no",
+    },
+    resolver: yupResolver(schema),
+  });
 
-    try {
-      await firebase.auth().signInWithEmailAndPassword(email, password);
-      console.log("Du har blitt logget inn");
-    } catch (error) {
-      setError(error.message);
-      console.log("Noe gikk galt");
-    }
+  const onSubmit = async (data) => {
+    console.log("Form data", data);
+
+    // try {
+    //   await firebase.auth().signInWithEmailAndPassword(email, password);
+    //   console.log("Du har blitt logget inn");
+    // } catch (error) {
+    //   setError(error.message);
+    //   console.log("Noe gikk galt");
+    // }
   };
+  useEffect(() => {
+    console.log("errors", errors);
+  }, [errors]);
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="email"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <input type="text" name="email" placeholder="Email" ref={register} />
         <input
           type="password"
           name="password"
           placeholder="Passord"
-          onChange={(e) => setPassword(e.target.value)}
+          ref={register}
         />
         <button type="submit">Registrer deg</button>
         {error && <p>{error}</p>}
